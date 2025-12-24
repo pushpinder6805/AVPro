@@ -1,31 +1,20 @@
 import Component from "@glimmer/component";
-import { get } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import ShareTopicModal from "discourse/components/modal/share-topic";
-import TopicExcerpt from "discourse/components/topic-list/topic-excerpt";
 import TopicLink from "discourse/components/topic-list/topic-link";
-import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
-import TopicPostBadges from "discourse/components/topic-post-badges";
 import TopicStatus from "discourse/components/topic-status";
+import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
+import TopicExcerpt from "discourse/components/topic-list/topic-excerpt";
 import UserLink from "discourse/components/user-link";
 import avatar from "discourse/helpers/avatar";
 import icon from "discourse/helpers/d-icon";
-import discourseTags from "discourse/helpers/discourse-tags";
 import formatDate from "discourse/helpers/format-date";
 import { wantsNewWindow } from "discourse/lib/intercept-click";
-import { i18n } from "discourse-i18n";
 
 export default class Item extends Component {
-  @service currentUser;
   @service modal;
-
-  get newDotText() {
-    return this.currentUser?.trust_level > 0
-      ? ""
-      : i18n("filters.new.lower_title");
-  }
 
   @action
   openTopic(event) {
@@ -55,12 +44,12 @@ export default class Item extends Component {
 
   <template>
     {{! template-lint-disable no-invalid-interactive }}
-    <div {{on "click" this.openTopic}} class="custom-topic-layout">
+    <div {{on "click" this.openTopic}} class="custom-topic-card">
 
       {{!-- LEFT CONTENT --}}
-      <div class="custom-topic-layout_body">
+      <div class="custom-topic-card_body">
 
-        {{!-- AUTHOR ROW --}}
+        {{!-- AUTHOR ROW (ONLY avatar + username + time) --}}
         <div class="custom-topic-author">
           <UserLink @user={{@outletArgs.topic.creator}}>
             {{avatar @outletArgs.topic.creator imageSize="small"}}
@@ -71,7 +60,7 @@ export default class Item extends Component {
 
           <span class="topic-time">
             {{formatDate
-              @outletArgs.topic.createdAt
+              @outletArgs.topic.created_at
               format="relative"
               noTitle="true"
             }}
@@ -79,42 +68,22 @@ export default class Item extends Component {
         </div>
 
         {{!-- TITLE --}}
-        <h2 class="topic-title">
+        <h2 class="custom-topic-title">
           <TopicStatus @topic={{@outletArgs.topic}} />
-
           <TopicLink
             @topic={{@outletArgs.topic}}
             class="raw-link raw-topic-link"
           />
-
           <UnreadIndicator @topic={{@outletArgs.topic}} />
-
-          {{#if @outletArgs.showTopicPostBadges}}
-            <TopicPostBadges
-              @unreadPosts={{@outletArgs.topic.unread_posts}}
-              @unseen={{@outletArgs.topic.unseen}}
-              @newDotText={{this.newDotText}}
-              @url={{@outletArgs.topic.lastUnreadUrl}}
-            />
-          {{/if}}
         </h2>
 
-        {{!-- EXCERPT (ALWAYS VISIBLE) --}}
-        <div class="custom-topic-layout_excerpt">
+        {{!-- EXCERPT (ALWAYS) --}}
+        <div class="custom-topic-excerpt">
           <TopicExcerpt @topic={{@outletArgs.topic}} />
         </div>
 
-        {{!-- TAGS --}}
-        <div class="link-bottom-line">
-          {{discourseTags
-            @outletArgs.topic
-            mode="list"
-            tagsForUser=@outletArgs.tagsForUser
-          }}
-        </div>
-
         {{!-- META BAR --}}
-        <div class="custom-topic-layout_bottom-bar">
+        <div class="custom-topic-meta">
           <span>
             {{icon "heart"}}
             {{@outletArgs.topic.like_count}}
@@ -122,24 +91,20 @@ export default class Item extends Component {
 
           <span>
             {{icon "reply"}}
-            {{@outletArgs.topic.replyCount}}
+            {{@outletArgs.topic.reply_count}}
           </span>
 
-          <span {{on "click" this.share}} class="share-toggle">
-            {{icon "link"}}
-            Share
+          <span {{on "click" this.share}} class="share">
+            {{icon "link"}} Share
           </span>
         </div>
 
       </div>
 
       {{!-- RIGHT IMAGE --}}
-      {{#if @outletArgs.topic.thumbnails}}
-        <div class="custom-topic-layout_image">
-          <img
-            src={{get @outletArgs "topic.thumbnails.0.url"}}
-            loading="lazy"
-          />
+      {{#if @outletArgs.topic.image_url}}
+        <div class="custom-topic-image">
+          <img src={{@outletArgs.topic.image_url}} loading="lazy" />
         </div>
       {{/if}}
 
