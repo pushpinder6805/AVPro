@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import dIcon from "discourse/helpers/d-icon";
 import formatDate from "discourse/helpers/format-date";
-import i18n from "discourse/helpers/i18n";
 import LikeToggle from "./like-toggle";
 
 export default class TopicMetadata extends Component {
@@ -9,7 +8,7 @@ export default class TopicMetadata extends Component {
     <div class="topic-card__metadata">
       {{#if settings.show_publish_date}}
         <span class="topic-card__publish-date">
-          {{i18n (themePrefix "published")}}
+          Published
           {{formatDate @topic.createdAt format="medium-with-ago"}}
         </span>
       {{/if}}
@@ -36,10 +35,12 @@ export default class TopicMetadata extends Component {
         {{/if}}
 
         {{#if settings.show_activity}}
-          <span class="topic-card__activity item">
-            {{dIcon "clock"}}
-            {{formatDate @topic.lastPostedAt format="relative"}}
-          </span>
+          {{#if @topic.lastPostedAt}}
+            <span class="topic-card__activity item">
+              {{dIcon "clock"}}
+              {{formatDate @topic.lastPostedAt format="relative"}}
+            </span>
+          {{/if}}
         {{/if}}
       </div>
     </div>
