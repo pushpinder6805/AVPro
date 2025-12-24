@@ -1,4 +1,3 @@
-import ActivityCell from "discourse/components/topic-list/item/activity-cell";
 import dIcon from "discourse/helpers/d-icon";
 import formatDate from "discourse/helpers/format-date";
 import { i18n } from "discourse-i18n";
@@ -30,7 +29,7 @@ const TopicMetadata = <template>
       {{/if}}
 
       {{#if settings.show_reply_count}}
-        <span class="topic-card__reply_count item">
+        <span class="topic-card__reply-count item">
           {{dIcon "comment"}}
           <span class="number">
             {{@topic.replyCount}}
@@ -39,12 +38,14 @@ const TopicMetadata = <template>
       {{/if}}
 
       {{#if settings.show_activity}}
-        <div class="topic-card__activity item">
-          <ActivityCell @topic={{@topic}} />
-        </div>
+        <span class="topic-card__activity item">
+          {{dIcon "clock"}}
+          {{formatDate @topic.lastPostedAt format="relative"}}
+        </span>
       {{/if}}
     </div>
   </div>
 </template>;
 
 export default TopicMetadata;
+
