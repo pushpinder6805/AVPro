@@ -1,5 +1,4 @@
 import { apiInitializer } from "discourse/lib/api";
-import Discourse from "discourse";
 
 export default apiInitializer("1.29.0", (api) => {
   api.onPageChange((url) => {
@@ -15,7 +14,8 @@ export default apiInitializer("1.29.0", (api) => {
       // Prevent duplicate render
       if (document.querySelector(".category-tiles-wrapper")) return;
 
-      const categories = Discourse.Site.currentProp("categories");
+      // ✅ Supported source in Discourse 3.6+
+      const categories = window.Discourse?.Site?.currentProp("categories");
       if (!categories || !categories.length) return;
 
       const wrapper = document.createElement("div");
