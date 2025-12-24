@@ -31,12 +31,12 @@ export default class Item extends Component {
 
   @action
   onTitleFocus(event) {
-    event.target.closest(".topic-list-item").classList.add("selected");
+    event.target.closest(".custom-topic-layout")?.classList.add("selected");
   }
 
   @action
   onTitleBlur(event) {
-    event.target.closest(".topic-list-item").classList.remove("selected");
+    event.target.closest(".custom-topic-layout")?.classList.remove("selected");
   }
 
   @action
@@ -68,92 +68,101 @@ export default class Item extends Component {
   <template>
     {{! template-lint-disable no-invalid-interactive }}
     <div {{on "click" this.openTopic}} class="custom-topic-layout">
-      <div class="custom-topic-layout_meta">
-        {{#unless @outletArgs.hideCategory}}
-          {{#unless @outletArgs.topic.isPinnedUncategorized}}
-            <PluginOutlet
-              @name="topic-list-before-category"
-              @outletArgs={{lazyHash topic=@outletArgs.topic}}
-            />
-            {{categoryLink @outletArgs.topic.category}}
-            <span class="bullet-separator">&bull;</span>
+
+      {{!-- LEFT BODY --}}
+      <div class="custom-topic-layout_body">
+
+        {{!-- META --}}
+        <div class="custom-topic-layout_meta">
+          {{#unless @outletArgs.hideCategory}}
+            {{#unless @outletArgs.topic.isPinnedUncategorized}}
+              <PluginOutlet
+                @name="topic-list-before-category"
+                @outletArgs={{lazyHash topic=@outletArgs.topic}}
+              />
+              {{categoryLink @outletArgs.topic.category}}
+              <span class="bullet-separator">&bull;</span>
+            {{/unless}}
           {{/unless}}
+
+          <span class="custom-topic-layout_meta-posted">
+            {{i18n (themePrefix "posted_by")}}
+            <a
+              data-user-card={{get @outletArgs "topic.posters.0.user.username"}}
+              href="/u/{{get @outletArgs 'topic.posters.0.user.username'}}"
+            >
+              @{{get @outletArgs "topic.posters.0.user.username"}}
+            </a>
+            {{formatDate
+              @outletArgs.topic.createdAt
+              format="medium"
+              noTitle="true"
+              leaveAgo="true"
+            }}
+          </span>
+        </div>
+
+        {{!-- TITLE --}}
+        <h2 class="link-top-line">
+          <TopicStatus @topic={{@outletArgs.topic}} />
+
+          <TopicLink
+            {{on "focus" this.onTitleFocus}}
+            {{on "blur" this.onTitleBlur}}
+            @topic={{@outletArgs.topic}}
+            class="raw-link raw-topic-link"
+          />
+
+          {{#if @outletArgs.topic.featured_link}}
+            {{topicFeaturedLink @outletArgs.topic}}
+          {{/if}}
+
+          <PluginOutlet
+            @name="topic-list-after-title"
+            @outletArgs={{lazyHash topic=@outletArgs.topic}}
+          />
+
+          <UnreadIndicator @topic={{@outletArgs.topic}} />
+
+          {{#if @outletArgs.showTopicPostBadges}}
+            <TopicPostBadges
+              @unreadPosts={{@outletArgs.topic.unread_posts}}
+              @unseen={{@outletArgs.topic.unseen}}
+              @newDotText={{this.newDotText}}
+              @url={{@outletArgs.topic.lastUnreadUrl}}
+            />
+          {{/if}}
+        </h2>
+
+        {{!-- TAGS --}}
+        <div class="link-bottom-line">
+          {{discourseTags
+            @outletArgs.topic
+            mode="list"
+            tagsForUser=@outletArgs.tagsForUser
+          }}
+        </div>
+
+        {{!-- EXCERPT (only when no image) --}}
+        {{#unless @outletArgs.topic.thumbnails}}
+          <div class="custom-topic-layout_excerpt">
+            <TopicExcerpt @topic={{@outletArgs.topic}} />
+          </div>
         {{/unless}}
 
-        <span class="custom-topic-layout_meta-posted">
-          <span class="custom-topic-layout_meta-posted-by">
-            {{i18n (themePrefix "posted_by")}}
-          </span>
-
-          <a
-            data-user-card={{get @outletArgs "topic.posters.0.user.username"}}
-            href="/u/{{get @outletArgs 'topic.posters.0.user.username'}}"
-          >@{{get @outletArgs "topic.posters.0.user.username"}}</a>
-
-          {{formatDate
-            @outletArgs.topic.createdAt
-            format="medium"
-            noTitle="true"
-            leaveAgo="true"
-          }}
-        </span>
       </div>
 
-      <h2 class="link-top-line">
-        <TopicStatus @topic={{@outletArgs.topic}} />
-
-        <TopicLink
-          {{on "focus" this.onTitleFocus}}
-          {{on "blur" this.onTitleBlur}}
-          @topic={{@outletArgs.topic}}
-          class="raw-link raw-topic-link"
-        />
-
-        {{#if @outletArgs.topic.featured_link}}
-          {{topicFeaturedLink @outletArgs.topic}}
-        {{/if}}
-
-        <PluginOutlet
-          @name="topic-list-after-title"
-          @outletArgs={{lazyHash topic=@outletArgs.topic}}
-        />
-
-        <UnreadIndicator @topic={{@outletArgs.topic}} />
-
-        {{#if @outletArgs.showTopicPostBadges}}
-          <TopicPostBadges
-            @unreadPosts={{@outletArgs.topic.unread_posts}}
-            @unseen={{@outletArgs.topic.unseen}}
-            @newDotText={{this.newDotText}}
-            @url={{@outletArgs.topic.lastUnreadUrl}}
-          />
-        {{/if}}
-      </h2>
-
-      <div class="link-bottom-line">
-        {{discourseTags
-          @outletArgs.topic
-          mode="list"
-          tagsForUser=@outletArgs.tagsForUser
-        }}
-      </div>
-
+      {{!-- RIGHT IMAGE --}}
       {{#if @outletArgs.topic.thumbnails}}
         <div class="custom-topic-layout_image">
           <img
-            height={{get @outletArgs "topic.thumbnails.0.height"}}
-            width={{get @outletArgs "topic.thumbnails.0.width"}}
             src={{get @outletArgs "topic.thumbnails.0.url"}}
+            loading="lazy"
           />
         </div>
       {{/if}}
 
-      {{#unless @outletArgs.topic.thumbnails}}
-        <div class="custom-topic-layout_excerpt">
-          <TopicExcerpt @topic={{@outletArgs.topic}} />
-        </div>
-      {{/unless}}
-
+      {{!-- BOTTOM BAR --}}
       <div class="custom-topic-layout_bottom-bar">
         <span class="reply-count">
           {{icon "reply"}}
@@ -161,12 +170,13 @@ export default class Item extends Component {
           {{i18n "replies"}}
         </span>
 
-        {{! template-lint-disable no-invalid-interactive }}
         <span {{on "click" this.share}} class="share-toggle">
           {{icon "link"}}
           {{i18n "post.quote_share"}}
         </span>
       </div>
+
     </div>
   </template>
 }
+
