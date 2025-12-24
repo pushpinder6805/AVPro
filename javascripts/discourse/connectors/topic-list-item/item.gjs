@@ -4,18 +4,16 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import ShareTopicModal from "discourse/components/modal/share-topic";
-import PluginOutlet from "discourse/components/plugin-outlet";
 import TopicExcerpt from "discourse/components/topic-list/topic-excerpt";
 import TopicLink from "discourse/components/topic-list/topic-link";
 import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
 import TopicPostBadges from "discourse/components/topic-post-badges";
 import TopicStatus from "discourse/components/topic-status";
-import categoryLink from "discourse/helpers/category-link";
+import UserLink from "discourse/components/user-link";
+import avatar from "discourse/helpers/avatar";
 import icon from "discourse/helpers/d-icon";
 import discourseTags from "discourse/helpers/discourse-tags";
 import formatDate from "discourse/helpers/format-date";
-import lazyHash from "discourse/helpers/lazy-hash";
-import topicFeaturedLink from "discourse/helpers/topic-featured-link";
 import { wantsNewWindow } from "discourse/lib/intercept-click";
 import { i18n } from "discourse-i18n";
 
@@ -27,16 +25,6 @@ export default class Item extends Component {
     return this.currentUser?.trust_level > 0
       ? ""
       : i18n("filters.new.lower_title");
-  }
-
-  @action
-  onTitleFocus(event) {
-    event.target.closest(".custom-topic-layout")?.classList.add("selected");
-  }
-
-  @action
-  onTitleBlur(event) {
-    event.target.closest(".custom-topic-layout")?.classList.remove("selected");
   }
 
   @action
@@ -69,57 +57,34 @@ export default class Item extends Component {
     {{! template-lint-disable no-invalid-interactive }}
     <div {{on "click" this.openTopic}} class="custom-topic-layout">
 
-      {{!-- LEFT BODY --}}
+      {{!-- LEFT CONTENT --}}
       <div class="custom-topic-layout_body">
 
-        {{!-- META --}}
-        <div class="custom-topic-layout_meta">
-          {{#unless @outletArgs.hideCategory}}
-            {{#unless @outletArgs.topic.isPinnedUncategorized}}
-              <PluginOutlet
-                @name="topic-list-before-category"
-                @outletArgs={{lazyHash topic=@outletArgs.topic}}
-              />
-              {{categoryLink @outletArgs.topic.category}}
-              <span class="bullet-separator">&bull;</span>
-            {{/unless}}
-          {{/unless}}
+        {{!-- AUTHOR ROW --}}
+        <div class="custom-topic-author">
+          <UserLink @user={{@outletArgs.topic.creator}}>
+            {{avatar @outletArgs.topic.creator imageSize="small"}}
+            <span class="username">
+              @{{@outletArgs.topic.creator.username}}
+            </span>
+          </UserLink>
 
-          <span class="custom-topic-layout_meta-posted">
-            {{i18n (themePrefix "posted_by")}}
-            <a
-              data-user-card={{get @outletArgs "topic.posters.0.user.username"}}
-              href="/u/{{get @outletArgs 'topic.posters.0.user.username'}}"
-            >
-              @{{get @outletArgs "topic.posters.0.user.username"}}
-            </a>
+          <span class="topic-time">
             {{formatDate
               @outletArgs.topic.createdAt
-              format="medium"
+              format="relative"
               noTitle="true"
-              leaveAgo="true"
             }}
           </span>
         </div>
 
         {{!-- TITLE --}}
-        <h2 class="link-top-line">
+        <h2 class="topic-title">
           <TopicStatus @topic={{@outletArgs.topic}} />
 
           <TopicLink
-            {{on "focus" this.onTitleFocus}}
-            {{on "blur" this.onTitleBlur}}
             @topic={{@outletArgs.topic}}
             class="raw-link raw-topic-link"
-          />
-
-          {{#if @outletArgs.topic.featured_link}}
-            {{topicFeaturedLink @outletArgs.topic}}
-          {{/if}}
-
-          <PluginOutlet
-            @name="topic-list-after-title"
-            @outletArgs={{lazyHash topic=@outletArgs.topic}}
           />
 
           <UnreadIndicator @topic={{@outletArgs.topic}} />
@@ -134,6 +99,11 @@ export default class Item extends Component {
           {{/if}}
         </h2>
 
+        {{!-- EXCERPT (ALWAYS VISIBLE) --}}
+        <div class="custom-topic-layout_excerpt">
+          <TopicExcerpt @topic={{@outletArgs.topic}} />
+        </div>
+
         {{!-- TAGS --}}
         <div class="link-bottom-line">
           {{discourseTags
@@ -143,12 +113,23 @@ export default class Item extends Component {
           }}
         </div>
 
-        {{!-- EXCERPT (only when no image) --}}
-        {{#unless @outletArgs.topic.thumbnails}}
-          <div class="custom-topic-layout_excerpt">
-            <TopicExcerpt @topic={{@outletArgs.topic}} />
-          </div>
-        {{/unless}}
+        {{!-- META BAR --}}
+        <div class="custom-topic-layout_bottom-bar">
+          <span>
+            {{icon "heart"}}
+            {{@outletArgs.topic.like_count}}
+          </span>
+
+          <span>
+            {{icon "reply"}}
+            {{@outletArgs.topic.replyCount}}
+          </span>
+
+          <span {{on "click" this.share}} class="share-toggle">
+            {{icon "link"}}
+            Share
+          </span>
+        </div>
 
       </div>
 
@@ -161,20 +142,6 @@ export default class Item extends Component {
           />
         </div>
       {{/if}}
-
-      {{!-- BOTTOM BAR --}}
-      <div class="custom-topic-layout_bottom-bar">
-        <span class="reply-count">
-          {{icon "reply"}}
-          {{@outletArgs.topic.replyCount}}
-          {{i18n "replies"}}
-        </span>
-
-        <span {{on "click" this.share}} class="share-toggle">
-          {{icon "link"}}
-          {{i18n "post.quote_share"}}
-        </span>
-      </div>
 
     </div>
   </template>
