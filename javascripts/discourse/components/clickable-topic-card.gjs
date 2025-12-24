@@ -3,11 +3,11 @@ import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 import { service } from "@ember/service";
-import { navigateToTopic } from "discourse/components/topic-list-item";
 import { bind } from "discourse/lib/decorators";
 import { wantsNewWindow } from "discourse/lib/intercept-click";
+import DiscourseURL from "discourse/lib/url";
 
-export default class extends Component {
+export default class ClickableTopicCard extends Component {
   @service site;
 
   @bind
@@ -34,7 +34,11 @@ export default class extends Component {
       if (wantsNewWindow(event)) {
         return true;
       }
-      return navigateToTopic.call(this, topic, topic.lastUnreadUrl);
+
+      // ✅ Supported navigation
+      DiscourseURL.routeTo(topic.lastUnreadUrl || topic.url);
+      event.preventDefault();
+      return false;
     }
   }
 
@@ -56,3 +60,4 @@ export default class extends Component {
     ></div>
   </template>
 }
+
