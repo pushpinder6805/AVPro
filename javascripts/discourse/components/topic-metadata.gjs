@@ -1,6 +1,5 @@
 import dIcon from "discourse/helpers/d-icon";
 import formatDate from "discourse/helpers/format-date";
-import { i18n } from "discourse-i18n";
 import LikeToggle from "./like-toggle";
 
 const TopicMetadata = <template>
