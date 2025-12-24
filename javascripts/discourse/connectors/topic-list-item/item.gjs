@@ -84,20 +84,28 @@ export default class Item extends Component {
 
         {{!-- META BAR --}}
         <div class="custom-topic-meta">
-          <span>
-            {{icon "heart"}}
-            {{@outletArgs.topic.like_count}}
-          </span>
+  <span class="meta-date">
+    {{formatDate
+      @outletArgs.topic.created_at
+      format="relative"
+      noTitle="true"
+    }}
+  </span>
 
-          <span>
-            {{icon "reply"}}
-            {{@outletArgs.topic.reply_count}}
-          </span>
+  <span>
+    {{icon "heart"}}
+    {{@outletArgs.topic.like_count}}
+  </span>
 
-          <span {{on "click" this.share}} class="share">
-            {{icon "link"}} Share
-          </span>
-        </div>
+  <span>
+    {{icon "reply"}}
+    {{@outletArgs.topic.reply_count}}
+  </span>
+  
+  <span {{on "click" this.share}} class="share">
+    {{icon "link"}} Share
+  </span>
+</div>
 
       </div>
 
