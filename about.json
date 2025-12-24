@@ -1,0 +1,20 @@
+{
+  "name": "AVPro",
+  "component": false,
+  "license_url": null,
+  "about_url": null,
+  "authors": null,
+  "theme_version": null,
+  "minimum_discourse_version": null,
+  "maximum_discourse_version": null,
+  "assets": {
+    "Figtree": "assets/Figtree.ttf",
+    "Figtree-Black": "assets/Figtree-Black.ttf",
+    "Figtree-Italic": "assets/Figtree-Italic.ttf",
+    "Inter": "assets/Inter.ttf",
+    "Inter-Italic": "assets/Inter-Italic.ttf"
+  },
+  "color_schemes": {},
+  "modifiers": {},
+  "learn_more": "https://meta.discourse.org/t/beginners-guide-to-using-discourse-themes/91966"
+}

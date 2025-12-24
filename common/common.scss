@@ -1,0 +1,117 @@
+:root {
+  --font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --heading-font-family: "Figtree", system-ui, sans-serif;
+}
+html,
+body,
+#main-outlet,
+.d-header,
+.d-header *,
+.d-dropdown,
+.d-dropdown *,
+.menu-panel,
+.menu-panel *,
+.btn,
+input,
+textarea,
+select,
+option,
+label,
+span,
+p,
+a,
+li,
+td,
+th,
+pre,
+code,
+.topic-body,
+.topic-body *,
+.post-stream,
+.post-stream *,
+.cooked,
+.cooked *,
+.chat-message-text,
+.chat-message-text *,
+.d-editor-input,
+.d-editor-preview,
+.user-card,
+.user-card * {
+  font-family: "Figtree", system-ui, sans-serif !important;
+}
+h1, h2, h3, h4, h5, h6,
+.topic-title,
+.fancy-title {
+  font-family: "$Figtree", system-ui, sans-serif !important;
+}
+
+
+/* Figtree */
+@font-face {
+  font-family: "Figtree";
+  src: url($Figtree) format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Figtree-Black";
+  src: url($Figtree-Black) format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Figtree";
+  src: url($Figtree-Italic) format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Inter */
+@font-face {
+  font-family: "Inter";
+  src: url($Inter) format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url($Inter-Italic) format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Figtree", system-ui, sans-serif !important;
+}
+
+
+//sidebar//
+.sidebar-section[data-section-name="categories"],
+.sidebar-section[data-section-name="categories"] .sidebar-section-header-wrapper,
+.sidebar-section[data-section-name="categories"] .sidebar-section-header {
+  display: none !important;
+}
+.sidebar-section[data-section-name="chat-search"] {
+  display: none !important;
+}
+.sidebar-section[data-section-name="chat-channels"] {
+  display: none !important;
+}
+.sidebar-section[data-section-name="chat-dms"] {
+  display: none !important;
+}
+//categories//
+
+
+
