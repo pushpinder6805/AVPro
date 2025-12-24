@@ -1,19 +1,22 @@
 import { apiInitializer } from "discourse/lib/api";
+import Discourse from "discourse";
 
 export default apiInitializer("1.29.0", (api) => {
   api.onPageChange((url) => {
     if (!url.startsWith("/categories")) return;
 
     requestAnimationFrame(() => {
-      const outlet = document.querySelector(".categories-list");
-      if (!outlet) return;
+      const defaultList = document.querySelector(".categories-list");
+      if (!defaultList) return;
 
-      outlet.style.display = "none";
+      // Hide default list
+      defaultList.style.display = "none";
 
+      // Prevent duplicate render
       if (document.querySelector(".category-tiles-wrapper")) return;
 
-      const categories =
-        api.container.lookup("service:store").peekAll("category");
+      const categories = Discourse.Site.currentProp("categories");
+      if (!categories || !categories.length) return;
 
       const wrapper = document.createElement("div");
       wrapper.className = "category-tiles-wrapper";
@@ -29,7 +32,7 @@ export default apiInitializer("1.29.0", (api) => {
 
         const tags = (cat.custom_fields?.tile_tags || "")
           .split(",")
-          .map((t) => t.trim())
+          .map(t => t.trim())
           .filter(Boolean);
 
         const tile = document.createElement("a");
@@ -52,7 +55,7 @@ export default apiInitializer("1.29.0", (api) => {
         wrapper.appendChild(tile);
       });
 
-      outlet.parentElement.appendChild(wrapper);
+      defaultList.parentElement.appendChild(wrapper);
     });
   });
 });
