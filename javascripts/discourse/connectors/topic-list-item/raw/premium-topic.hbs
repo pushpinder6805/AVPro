@@ -1,0 +1,27 @@
+<div class="premium-topic-row">
+  <div class="premium-topic-content">
+    <h3 class="topic-title">
+      {{topic-link topic}}
+    </h3>
+
+    {{#if topic.excerpt}}
+      <div class="topic-excerpt">
+        {{{topic.excerpt}}}
+      </div>
+    {{/if}}
+
+    <div class="topic-meta">
+      <span>{{format-date topic.created_at}}</span>
+      <span>• by {{topic.creator.username}}</span>
+      <span>• ❤️ {{topic.like_count}}</span>
+      <span>• 💬 {{topic.reply_count}}</span>
+    </div>
+  </div>
+
+  {{#if topic.image_url}}
+    <div class="premium-topic-image">
+      <img src="{{topic.image_url}}" loading="lazy" />
+    </div>
+  {{/if}}
+</div>
+
