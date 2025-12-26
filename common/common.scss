@@ -127,8 +127,8 @@ h1, h2, h3, h4, h5, h6 {
 .category-card {
   display: flex;
   height: 100%;
-  border-radius: 16px;
-  border: 1px solid var(--primary-low);
+  border-radius: 5px;
+  border: 1px solid #e5e5e5;
   background: var(--secondary);
   overflow: hidden;
   transition: transform .2s ease, box-shadow .2s ease;
